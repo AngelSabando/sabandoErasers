@@ -1,5 +1,4 @@
 <?php
-// api.php - Controlador REST usando Eloquent ORM
 require_once 'config.php';
 
 header('Content-Type: application/json');
@@ -10,9 +9,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // Obtener todos los profesores usando el ORM
     try {
-        // Eloquent: Obtener todos ordenados por id descendente
         $professors = Professor::orderBy('id', 'desc')->get();
         echo json_encode($professors);
     } catch (\Exception $e) {
@@ -20,7 +17,6 @@ if ($method === 'GET') {
         echo json_encode(['error' => $e->getMessage()]);
     }
 } elseif ($method === 'POST') {
-    // Insertar un nuevo profesor usando el ORM
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (!$data) {
@@ -30,9 +26,6 @@ if ($method === 'GET') {
     }
 
     try {
-        // Eloquent: Crear un nuevo registro
-        // Como nuestras llaves del JSON vienen en camelCase (ej. fullName) 
-        // pero Postgres usa minúsculas (ej. fullname), mapeamos el arreglo
         $professorData = [
             'fullname' => $data['fullName'],
             'age' => $data['age'],
@@ -40,7 +33,7 @@ if ($method === 'GET') {
             'phone' => $data['phone'] ?? null,
             'salary' => $data['salary'],
             'department' => $data['department'],
-            'hiredate' => $data['hireDate'], // Importante: hiredate minúscula para bd, hireDate del json
+            'hiredate' => $data['hireDate'], 
             'officelocation' => $data['officeLocation'] ?? null
         ];
 
