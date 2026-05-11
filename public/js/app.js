@@ -24,12 +24,16 @@ async function loadProfessors() {
     
     try {
         const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('Error fetching data');
+        const data = await response.json();
         
-        const professors = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Error fetching data');
+        }
+        
+        const professors = data;
         tbody.innerHTML = ''; // Limpiar mensaje de carga
 
-        if (professors.length === 0) {
+        if (!Array.isArray(professors) || professors.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No professors found.</td></tr>';
             return;
         }
@@ -52,7 +56,7 @@ async function loadProfessors() {
         });
     } catch (error) {
         console.error(error);
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Error loading data. Check console.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
     }
 }
 
