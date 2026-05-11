@@ -1,6 +1,6 @@
 <?php
 
-$host = 'dwvgwqgqhuezeagdwxdw.supabase.co';
+$host = 'db.dwvgwqgqhuezeagdwxdw.supabase.co';
 $db   = 'postgres';
 $user = 'postgres';
 $pass = '20052010Dan@!12';
