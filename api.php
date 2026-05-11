@@ -1,4 +1,5 @@
 <?php
+// api.php - Controlador REST usando Eloquent ORM
 require_once 'config.php';
 
 header('Content-Type: application/json');
@@ -9,15 +10,17 @@ header('Access-Control-Allow-Headers: Content-Type');
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
+    // Obtener todos los profesores usando el ORM
     try {
-        $stmt = $pdo->query('SELECT * FROM professors ORDER BY id DESC');
-        $professors = $stmt->fetchAll();
+        // Eloquent: Obtener todos ordenados por id descendente
+        $professors = Professor::orderBy('id', 'desc')->get();
         echo json_encode($professors);
-    } catch (\PDOException $e) {
+    } catch (\Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => $e->getMessage()]);
     }
 } elseif ($method === 'POST') {
+    // Insertar un nuevo profesor usando el ORM
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (!$data) {
@@ -26,25 +29,26 @@ if ($method === 'GET') {
         exit;
     }
 
-    $sql = "INSERT INTO professors (fullName, age, email, phone, salary, department, hireDate, officeLocation) 
-            VALUES (:fullName, :age, :email, :phone, :salary, :department, :hireDate, :officeLocation)";
-    
     try {
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            'fullName' => $data['fullName'],
+        // Eloquent: Crear un nuevo registro
+        // Como nuestras llaves del JSON vienen en camelCase (ej. fullName) 
+        // pero Postgres usa minúsculas (ej. fullname), mapeamos el arreglo
+        $professorData = [
+            'fullname' => $data['fullName'],
             'age' => $data['age'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
             'salary' => $data['salary'],
             'department' => $data['department'],
-            'hireDate' => $data['hireDate'],
-            'officeLocation' => $data['officeLocation'] ?? null
-        ]);
+            'hiredate' => $data['hireDate'], // Importante: hiredate minúscula para bd, hireDate del json
+            'officelocation' => $data['officeLocation'] ?? null
+        ];
+
+        Professor::create($professorData);
         
         http_response_code(201);
-        echo json_encode(['message' => 'Professor created successfully']);
-    } catch (\PDOException $e) {
+        echo json_encode(['message' => 'Professor created successfully via ORM!']);
+    } catch (\Exception $e) {
         http_response_code(500);
         echo json_encode(['error' => $e->getMessage()]);
     }
