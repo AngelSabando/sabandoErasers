@@ -1,24 +1,18 @@
-// URL de la API (ajustar según el entorno, por ejemplo: http://localhost/sabandoErasers/api.php)
 const API_URL = '../api.php';
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Si estamos en index.html, cargamos los profesores
     const professorsTable = document.getElementById('professorsTable');
     if (professorsTable) {
         loadProfessors();
     }
 
-    // Si estamos en create.html, manejamos el formulario
     const createForm = document.getElementById('createProfessorForm');
     if (createForm) {
         createForm.addEventListener('submit', handleCreateProfessor);
     }
 });
 
-/**
- * Carga los profesores desde la API y los renderiza en la tabla
- */
 async function loadProfessors() {
     const tbody = document.querySelector('#professorsTable tbody');
     
@@ -31,7 +25,7 @@ async function loadProfessors() {
         }
         
         const professors = data;
-        tbody.innerHTML = ''; // Limpiar mensaje de carga
+        tbody.innerHTML = ''; 
 
         if (!Array.isArray(professors) || professors.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No professors found.</td></tr>';
@@ -39,9 +33,7 @@ async function loadProfessors() {
         }
 
         professors.forEach(prof => {
-            // Valor Computado (Rúbrica: 10 points)
-            // Calculamos el bono basado en los años de servicio.
-            const bonusHtml = calculateBonus(prof.hireDate, prof.salary);
+            const bonusHtml = calculateBonus(prof.hiredate, prof.salary);
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -49,7 +41,7 @@ async function loadProfessors() {
                 <td>${prof.fullname}</td>
                 <td>${prof.department}</td>
                 <td>${prof.email}</td>
-                <td>${prof.hireDate}</td>
+                <td>${prof.hiredate}</td>
                 <td>${bonusHtml}</td>
             `;
             tbody.appendChild(tr);
@@ -60,10 +52,6 @@ async function loadProfessors() {
     }
 }
 
-/**
- * Calcula un bono dinámico basado en los años de servicio
- * (Valor computado requerido por la rúbrica)
- */
 function calculateBonus(hireDateStr, baseSalary) {
     const hireDate = new Date(hireDateStr);
     const today = new Date();
@@ -76,11 +64,11 @@ function calculateBonus(hireDateStr, baseSalary) {
 
     let bonusPercentage = 0;
     if (yearsOfService >= 10) {
-        bonusPercentage = 0.15; // 15% bonus
+        bonusPercentage = 0.15; 
     } else if (yearsOfService >= 5) {
-        bonusPercentage = 0.10; // 10% bonus
+        bonusPercentage = 0.10;
     } else if (yearsOfService >= 2) {
-        bonusPercentage = 0.05; // 5% bonus
+        bonusPercentage = 0.05;
     }
 
     if (bonusPercentage > 0) {
@@ -91,9 +79,6 @@ function calculateBonus(hireDateStr, baseSalary) {
     }
 }
 
-/**
- * Maneja el envío del formulario para crear un nuevo profesor
- */
 async function handleCreateProfessor(event) {
     event.preventDefault();
     
