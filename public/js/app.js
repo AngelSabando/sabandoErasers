@@ -42,7 +42,6 @@ async function loadProfessors() {
                 <td>${prof.department}</td>
                 <td>${prof.email}</td>
                 <td>${prof.hiredate}</td>
-                <td>${bonusHtml}</td>
             `;
             tbody.appendChild(tr);
         });
